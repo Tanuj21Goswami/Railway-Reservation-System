@@ -70,8 +70,10 @@ class QueryRunner implements Runnable
                {
                 //    System.out.println(pnr);
                    String forfunc ="";
+                //    String output="";
+                   String dummy="";
                    forfunc=forfunc+"SELECT * from book_tickets(";
- 
+                
                    inputQ=inputQ+"SELECT * from is_seat_available(";
                    String delimSpace = "[, ]+";
                    String[] arr1  = clientCommand.split(delimSpace);
@@ -80,6 +82,7 @@ class QueryRunner implements Runnable
                    inputQ=inputQ+"'"+arr1[x-2]+"',";
                    inputQ=inputQ+"'"+arr1[x-1].charAt(0)+"',";
                    inputQ=inputQ+arr1[0]+");";
+
  
                    forfunc=forfunc+arr1[0]+",";
                    String names="'";
@@ -92,7 +95,7 @@ class QueryRunner implements Runnable
                    forfunc=forfunc+"'";
                    forfunc=forfunc+arr1[x-1].charAt(0)+"',";
  
- 
+                   String []output=new String[Integer.parseInt(arr1[0])];
  
                    System.out.println(inputQ);
                   
@@ -114,8 +117,50 @@ class QueryRunner implements Runnable
                                         rs = st.executeQuery(forfunc);
                                         while(rs.next()){
                                             System.out.println(rs.getString(1));
+                                            dummy=rs.getString(1);
                                         }
-                                }catch (SQLException e) {
+                                    String[] arr  = dummy.split(delimSpace);  
+                                    int l=arr.length;
+                                    int in=1;  
+                                    for(int i=0;i<Integer.parseInt(arr1[0]) && in<l;i++)
+                                    {
+                                        output[i]=String.valueOf(i+1)+") "+arr1[i+1]+" "+arr[in]+" "+arr[in+1];
+                                        in=in+2;
+                                    }
+
+                                    if(arr[1].charAt(0)=='A')
+                                    {
+                                        String []AC={"LB","LB","UB","UB","SL","SU"};
+                                        in=1;
+                                        for(int i=0;i<Integer.parseInt((arr1[0]));i++)
+                                        {
+                                            int ber=Integer.parseInt((arr[in+1]));
+                                            output[i]=output[i]+" "+AC[ber%6];
+                                            in=in+2;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        String []SL={"LB","MB","UB","lB","MB","UB","SL","SU"};
+                                        in=1;
+                                        for(int i=0;i<Integer.parseInt((arr1[0]));i++)
+                                        {
+                                            int ber=Integer.parseInt((arr[in+1]));
+                                            output[i]=output[i]+" "+SL[ber%8];
+                                            in=in+2;
+                                        }
+                                    }
+
+                                    String heading="";
+                                    heading="PNR: " + arr[0] + "\n" + "Train No: "+ arr1[x-3]+"\nDate Of Journey: "+arr1[x-2];
+                                    System.out.println(heading); 
+                                    for(int i=0;i<Integer.parseInt((arr1[0]));i++)
+                                    {
+                                        System.out.println(output[i]);
+                                    }
+
+                                }
+                                catch (SQLException e) {
                                     // TODO Auto-generated catch block
                                     e.printStackTrace();
                                 }
