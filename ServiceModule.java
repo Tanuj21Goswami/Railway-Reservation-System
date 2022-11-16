@@ -18,10 +18,12 @@ class QueryRunner implements Runnable
    public QueryRunner(Socket clientSocket,Connection con){
        this.socketConnection =  clientSocket;
        this.con  = con;
+       
    }
    public void run()
    {
-     try{          
+     try{        
+            this.con.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);  
             // Reading data from client
            InputStreamReader inputStream = new InputStreamReader(socketConnection
                                                        .getInputStream());
@@ -39,11 +41,6 @@ class QueryRunner implements Runnable
            {
                // Read client query
                clientCommand = bufferedInput.readLine();
-               // System.out.println("Recieved data <" + clientCommand + "> from client : "
-               //                     + socketConnection.getRemoteSocketAddress().toString());
- 
-               //  Tokenize here
-               // System.out.println(clientCommand);
                StringTokenizer tokenizer = new StringTokenizer(clientCommand);
                queryInput = tokenizer.nextToken();
                int len=queryInput.length();
@@ -57,13 +54,22 @@ class QueryRunner implements Runnable
                    inputQ=inputQ+arr1[2]+",";
                    inputQ=inputQ+"'"+arr1[1]+"');";
                    System.out.println(inputQ);
-                   try {
-                       Statement st = this.con.createStatement();
-                       st.executeQuery(inputQ);
-                   } catch (SQLException e) {
-                       // TODO Auto-generated catch block
-                       e.printStackTrace();
-                   }
+                   try{
+                        this.con.setAutoCommit(false);
+                        try {
+                            Statement st = this.con.createStatement();
+                            st.executeQuery(inputQ);
+                            System.out.println("query executed");
+                            this.con.commit();
+                        } catch (SQLException e) {
+                            // TODO Auto-generated catch block
+                            this.con.rollback();
+                            e.printStackTrace();
+                        }
+                    }
+                    catch(SQLException e){
+                        System.out.println("Error in setting auto commit to false");
+                    }
                    inputQ="";
                }
                else if(len<4)
@@ -81,9 +87,7 @@ class QueryRunner implements Runnable
                    inputQ=inputQ+arr1[x-3]+",";
                    inputQ=inputQ+"'"+arr1[x-2]+"',";
                    inputQ=inputQ+"'"+arr1[x-1].charAt(0)+"',";
-                   inputQ=inputQ+arr1[0]+");";
-
- 
+                   inputQ=inputQ+arr1[0]+");"; 
                    forfunc=forfunc+arr1[0]+",";
                    String names="'";
                    for(int i=1;i<=Integer.parseInt(arr1[0]);i++)
@@ -96,9 +100,9 @@ class QueryRunner implements Runnable
                    forfunc=forfunc+arr1[x-1].charAt(0)+"',";
  
                    String []output=new String[Integer.parseInt(arr1[0])];
- 
                    System.out.println(inputQ);
-                  
+                   try{
+                       this.con.setAutoCommit(false);
                    try {
                        Statement st = this.con.createStatement();
                        ResultSet rs = st.executeQuery(inputQ);
@@ -158,10 +162,11 @@ class QueryRunner implements Runnable
                                     {
                                         System.out.println(output[i]);
                                     }
-
+                                    this.con.commit();
                                 }
                                 catch (SQLException e) {
                                     // TODO Auto-generated catch block
+                                    this.con.rollback();
                                     e.printStackTrace();
                                 }
                         }
@@ -170,8 +175,13 @@ class QueryRunner implements Runnable
                     }
                     } catch (SQLException e) {
                         // TODO Auto-generated catch block
+                        this.con.rollback();
                         e.printStackTrace();
                     }
+                }
+                catch(SQLException e){
+                    System.out.println("Error in setting auto commit to false");
+                }
                     inputQ="";
                    // for (String uniqVal1 : arr1)
                    // {
@@ -222,7 +232,7 @@ class QueryRunner implements Runnable
               
            }
        }
-       catch(IOException e)
+       catch(Exception e)
        {
            return;
        }
