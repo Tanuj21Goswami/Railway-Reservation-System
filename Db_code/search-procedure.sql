@@ -14,19 +14,8 @@
     st_doj DATE;
     en_doj DATE;
     BEGIN
-        OPEN st_train(st);
-        LOOP
-            FETCH st_train INTO tno1,st_doj,en_sta,en_time;
-            EXIT WHEN st_train %NOTFOUND;
-            LOOP
-                OPEN en_train(en);
-                FETCH en_train INTO tno2,en_doj,st_sta,st_time;
-                EXIT WHEN en_train%NOTFOUND;
-                IF st_doj <= en_doj and isbefore(en_time , st_time) and en_sta = st_sta
-                THEN
-                    RAISE NOTICE '% - %',tno1,tno2;
-                END IF;
-            END LOOP;
-        END LOOP;
+    SELECT TNO1,STARTING_STN as st_stn1 ,ENDING_STN as en_stn1 ,DEP_TIME as dt1, ARR_TIME as at1
+    FROM RUNNING_TRAINS WHERE
+       
     END;
     $$ LANGUAGE 'plpgsql';
