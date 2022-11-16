@@ -50,8 +50,8 @@ class QueryRunner implements Runnable {
                     String[] arr1 = clientCommand.split(delimSpace);
                     inputQ = inputQ + "SELECT * from insert_train(";
                     inputQ = inputQ + arr1[0] + ",";
-                    inputQ = inputQ + arr1[3] + ",";
                     inputQ = inputQ + arr1[2] + ",";
+                    inputQ = inputQ + arr1[3] + ",";
                     inputQ = inputQ + "'" + arr1[1] + "');";
                     System.out.println(inputQ);
                     try {
