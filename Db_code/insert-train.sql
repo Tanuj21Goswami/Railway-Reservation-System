@@ -12,12 +12,13 @@ DECLARE
         booked_seats_tn varchar(100);
         train_tn varchar(100);
 BEGIN
-        IF _tno <0 or _tno > 99999
+        IF _tno <0 or _tno > 9999
         THEN
                 RETURN 0;
         END IF;
         
         select count(*) into tble_count from running_trains where tno = _tno and _doj = doj;
+        RAISE NOTICE '%',tble_count;
         IF tble_count !=0
         THEN
                 RETURN 2;
