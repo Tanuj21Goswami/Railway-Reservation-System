@@ -79,7 +79,7 @@ public class client
 {
    public static void main(String args[])throws IOException
    {
-       int numberOfusers = 5 ;   // Indicate no of users
+       int numberOfusers = 5;   // Indicate no of users
  
        // Creating a thread pool
        ExecutorService executorService = Executors.newFixedThreadPool(numberOfusers) ;
