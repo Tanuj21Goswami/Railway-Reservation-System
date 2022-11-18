@@ -10,6 +10,8 @@ import java.util.StringTokenizer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.sql.*;
+import java.io.File;
+import java.io.FileReader;
 class QueryRunner implements Runnable
 {
    //  Declare socket for client access
@@ -38,14 +40,15 @@ class QueryRunner implements Runnable
            String responseQuery = "" ;
            String queryInput = "" ;
            String inputQ="";
-           int query=1;
+        //    int query=0;
            while(true)
            {
+                // query=query+1;
                // Read client query
                clientCommand = bufferedInput.readLine();
                StringTokenizer tokenizer = new StringTokenizer(clientCommand);
                queryInput = tokenizer.nextToken();
-               System.out.println("query input: "+queryInput);
+            //    System.out.println("query input: "+queryInput);
                int len=queryInput.length();
                if(queryInput.equals("#")){
                    String returnMsg = "Connection Terminated - client : "
@@ -79,7 +82,7 @@ class QueryRunner implements Runnable
                             ResultSet rs =st.executeQuery(inputQ);
                             while(rs.next())
                             {
-                                System.out.println(rs.getInt(1));
+                                // System.out.println(rs.getInt(1));
                                 if(rs.getInt(1)==1)
                                 {
                                     responseQuery = "Train " + arr1[0] + " has been inserted on " + arr1[1];
@@ -135,6 +138,7 @@ class QueryRunner implements Runnable
                 //    System.out.println(inputQ);
                    int canBook = -1;
                    int counter = 0;
+                   int serverBusy = 0;
                    while(counter < max_try){
                         try{
                             Statement st = this.con.createStatement();
@@ -151,11 +155,14 @@ class QueryRunner implements Runnable
                             catch(SQLException e){
                                 this.con.rollback();
                                 counter++;
+                                if(counter == max_try)
+                                     serverBusy =1;
+
                                 e.printStackTrace();
                         }
                     }
                     try{
-                        if(canBook>=0){
+                        if(canBook>=0&&serverBusy==0){
                             forfunc=forfunc+",";
                             forfunc=forfunc+arr1[x-3]+",'"+arr1[x-2]+"');";
                             // System.out.println(forfunc);
@@ -198,9 +205,10 @@ class QueryRunner implements Runnable
                                 }
                             }
 
-                            String heading="#Query:";
-                            String q=Integer.toString(query);
-                            heading=heading+q+"\n";
+                            // String heading="#Query:";
+                            String heading ="";
+                            // String q=Integer.toString(query);
+                            // heading=heading+q+"\n";
                             // System.out.println(heading);
                             // System.out.println(query);
                             heading=heading+"PNR: " + arr[0] + "\n" + "Train No: "+ arr1[x-3]+"\nDate Of Journey: "+arr1[x-2];
@@ -215,8 +223,8 @@ class QueryRunner implements Runnable
                         }
                     else{
                         String heading="#Query:";
-                            String q=Integer.toString(query);
-                            heading=heading+q+"\n";
+                            // String q=Integer.toString(query);
+                            heading="";
                             // System.out.println(heading);
                             // System.out.println(query);
                             heading=heading+"Train No: "+ arr1[x-3]+"\nDate Of Journey: "+arr1[x-2];
@@ -267,7 +275,7 @@ class QueryRunner implements Runnable
                printWriter.println(responseQuery);
                // System.out.println("\nSent results to client - "
                //                     + socketConnection.getRemoteSocketAddress().toString() );
-              query=query+1;
+            //   query=query+1;
            }
        }
        catch(Exception e)
@@ -277,6 +285,7 @@ class QueryRunner implements Runnable
    }
 }
 
+
 /**
  * Main Class to controll the program flow
  */
@@ -285,6 +294,39 @@ public class ServiceModule {
     static int numServerCores = 2;
 
     // ------------ Main----------------------
+    public static String getSQLcommand(String filepath){
+        File file = new File(filepath);
+        BufferedReader bf;
+        String SQLcommand = "";
+        try{
+            bf = new BufferedReader(new FileReader(file));
+            String line = bf.readLine();
+            while(line!=null){
+                SQLcommand = SQLcommand + line + "\n";
+                line = bf.readLine();
+            }
+        }
+        catch(Exception e){
+            System.out.println("Error in reading the file " + filepath);
+        }
+        return SQLcommand;
+    }
+    public static void initialize_db(Connection con){
+        String[] sql_files = {"book_seat.sql","book_tickets.sql","insert_train.sql","is_seat_available.sql","search_procedure.sql","table_create.sql"};
+        for(int i=0;i<sql_files.length;i++){
+        try{
+            String getCommand = getSQLcommand("./Db_code/" + sql_files[i]);
+            // System.out.println(getCommand);
+            Statement st = con.createStatement();
+            st.execute(getCommand);
+        }
+        catch(SQLException e){
+            System.out.println("Error in executing sql command \n");
+            e.printStackTrace();
+        }
+    }
+      
+    }
     public static void main(String[] args) throws IOException {
         // Creating a thread pool
         ExecutorService executorService = Executors.newFixedThreadPool(numServerCores);
@@ -292,36 +334,45 @@ public class ServiceModule {
         // Creating a server socket to listen for clients
         ServerSocket serverSocket = new ServerSocket(serverPort); // need to close the port
         Socket socketConnection = null;
-
-        // Always-ON server
-        while (true) {
-            System.out.println("Listening port : " + serverPort
-                    + "\nWaiting for clients...");
-            socketConnection = serverSocket.accept(); // Accept a connection from a client
-            System.out.println("Accepted client :"
-                    + socketConnection.getRemoteSocketAddress().toString()
-                    + "\n");
-            // Create a runnable task
+        try{
+            Class.forName("org.postgresql.Driver");
+            String url = "jdbc:postgresql://localhost:5432/";
+            String userName = "postgres";
+            String passWord = "hello";
+            Connection con_fr_init;
             try {
-                Class.forName("org.postgresql.Driver");
-                String url = "jdbc:postgresql://localhost:5432/railway";
-                String userName = "postgres";
-                String passWord = "hello";
-                Connection con;
-                try {
-                    con = DriverManager.getConnection(url, userName, passWord);
-                    Runnable runnableTask = new QueryRunner(socketConnection, con);
-                    // Submit task for execution
-                    executorService.submit(runnableTask);
-                } catch (SQLException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            } catch (ClassNotFoundException e) {
+                con_fr_init = DriverManager.getConnection(url, userName, passWord);
+                initialize_db(con_fr_init);
+            } catch (SQLException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
 
+            // Always-ON server
+            while (true) {
+                System.out.println("Listening port : " + serverPort
+                        + "\nWaiting for clients...");
+                socketConnection = serverSocket.accept(); // Accept a connection from a client
+                System.out.println("Accepted client :"
+                        + socketConnection.getRemoteSocketAddress().toString()
+                        + "\n");
+                // Create a runnable task
+                    Connection con;
+                    try {
+                        con = DriverManager.getConnection(url, userName, passWord);
+                        Runnable runnableTask = new QueryRunner(socketConnection, con);
+                        // Submit task for execution
+                        executorService.submit(runnableTask);
+                    } catch (SQLException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+            } 
+
         }
+    catch(ClassNotFoundException e){
+        e.printStackTrace();
     }
+}
+    
 }
