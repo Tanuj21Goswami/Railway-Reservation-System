@@ -1,5 +1,21 @@
  CREATE OR REPLACE FUNCTION search_procedure(st VARCHAR(50) , en VARCHAR(50) )
-    RETURNS TABLE(train_1 INTEGER, train_1_starting VARCHAR(50), train_1_ending VARCHAR(50),train1_dep_time VARCHAR(50), train1_arr_time VARCHAR, train_1_doj DATE,train_2 INTEGER, train_2_starting VARCHAR(50), train_2_ending VARCHAR(50),train2_dep_time VARCHAR(50), train2_arr_time VARCHAR, train_2_doj DATE ) AS $$
+    RETURNS TABLE(
+    train_1 INTEGER, 
+    train_1_starting VARCHAR(50), 
+    train_1_ending VARCHAR(50),
+    train1_st_time time, 
+    train1_en_time time, 
+    train_1_doj_st DATE,
+    train_1_doj_en DATE,
+    train_2 INTEGER, 
+    train_2_starting VARCHAR(50), 
+    train_2_ending VARCHAR(50),
+    train2_st_time time, 
+    train2_en_time time, 
+    train_2_doj_st DATE,
+    train_2_doj_en DATE 
+)
+    AS $$
     DECLARE
 
       get_train_at_st1 cursor(sta varchar(50)) for select tno,arr_time,dep_time,doj from train_journey_info where stn = sta;
@@ -24,6 +40,7 @@
       final_date date;
 
     BEGIN
+    DELETE FROM QUERY_RESULT;
     open get_train_at_st1(st);
     loop
       fetch get_train_at_st1 into tn1,ar1,dep1,doj1;
@@ -38,14 +55,14 @@
          THEN
             IF itm_st = en
             THEN
-               RAISE NOTICE 'DIRECT TRAIN FOUND'; 
+               INSERT INTO QUERY_RESULT VALUES(tn1,st,en,dep1,itm_ar,doj1,itm_date);
             ELSE
                open get_train_at_st2(itm_st);
                loop 
                   fetch get_train_at_st2 into tn2,ar2,dep2,doj2;
                   exit when not found;
                   -- RAISE NOTICE '% % % %',tn2,ar2,dep2,doj2;
-                  IF tn2 != tn1 and ((itm_date < doj2) or (itm_date = doj2 and  ar2 >= itm_ar)) 
+                  IF tn2 != tn1 and ((itm_date < doj2) or (itm_date = doj2 and  dep2 >= itm_ar)) 
                   THEN
                         open get_train_journey2(tn2);
                         loop
@@ -54,6 +71,7 @@
                            -- RAISE NOTICE '% % % %',final_st,final_ar,final_dep,final_date;
                               IF final_st = en and ((final_date = doj2 and final_ar >= dep2 ) or final_date > doj2)                                
                               THEN
+                                  INSERT INTO QUERY_RESULT VALUES(tn1,st,itm_st,dep1,itm_ar,doj1,itm_date,tn2,itm_st,en,itm_dep,final_ar,itm_date,final_date);
                                   RAISE NOTICE 'INDIRECT TRAIN JOURNEY FOUND';
                               END IF;
                         end loop;
@@ -67,5 +85,6 @@
          close get_train_journey1;
     end loop;
     close get_train_at_st1;
+    RETURN query (select * from QUERY_RESULT);
     END;
     $$ LANGUAGE 'plpgsql';
