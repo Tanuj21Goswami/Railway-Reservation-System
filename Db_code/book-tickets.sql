@@ -10,7 +10,7 @@ gender varchar;
 Curr varchar(10);
 query varchar(1000);
 query_result varchar(1000);
-result varchar(1000);
+result varchar(15000);
 i  integer;
  
 BEGIN

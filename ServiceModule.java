@@ -79,8 +79,7 @@ class QueryRunner implements Runnable
                             this.con.rollback();
                             e.printStackTrace();
                         }
-                    }
-                    catch(SQLException e){
+                    } catch (SQLException e) {
                         System.out.println("Error in setting auto commit to false");
                     }
                    inputQ="";
@@ -238,54 +237,52 @@ class QueryRunner implements Runnable
        }
    }
 }
- 
+
 /**
-* Main Class to controll the program flow
-*/
-public class ServiceModule
-{
-   static int serverPort = 7005;
-   static int numServerCores = 2 ;
-   //------------ Main----------------------
-   public static void main(String[] args) throws IOException
-   {   
-       // Creating a thread pool
-       ExecutorService executorService = Executors.newFixedThreadPool(numServerCores);
-      
-       //Creating a server socket to listen for clients
-       ServerSocket serverSocket = new ServerSocket(serverPort); //need to close the port
-       Socket socketConnection = null;
-      
-       // Always-ON server
-       while(true)
-       {
-           System.out.println("Listening port : " + serverPort
-                               + "\nWaiting for clients...");
-           socketConnection = serverSocket.accept();   // Accept a connection from a client
-           System.out.println("Accepted client :"
-                               + socketConnection.getRemoteSocketAddress().toString()
-                               + "\n");
-           //  Create a runnable task
-           try {
-               Class.forName("org.postgresql.Driver");
-               String url = "jdbc:postgresql://localhost:5432/railway";
-               String userName = "postgres";       
-               String passWord = "hello";
-               Connection con;
-               try {
-                   con = DriverManager.getConnection(url,userName,passWord);
-                   Runnable runnableTask = new QueryRunner(socketConnection,con);
-                   //  Submit task for execution  
-                   executorService.submit(runnableTask);
-               } catch (SQLException e) {
-                   // TODO Auto-generated catch block
-                   e.printStackTrace();
-               }
-           } catch (ClassNotFoundException e) {
-               // TODO Auto-generated catch block
-               e.printStackTrace();
-           }
-          
-       }
-   }
+ * Main Class to controll the program flow
+ */
+public class ServiceModule {
+    static int serverPort = 7005;
+    static int numServerCores = 2;
+
+    // ------------ Main----------------------
+    public static void main(String[] args) throws IOException {
+        // Creating a thread pool
+        ExecutorService executorService = Executors.newFixedThreadPool(numServerCores);
+
+        // Creating a server socket to listen for clients
+        ServerSocket serverSocket = new ServerSocket(serverPort); // need to close the port
+        Socket socketConnection = null;
+
+        // Always-ON server
+        while (true) {
+            System.out.println("Listening port : " + serverPort
+                    + "\nWaiting for clients...");
+            socketConnection = serverSocket.accept(); // Accept a connection from a client
+            System.out.println("Accepted client :"
+                    + socketConnection.getRemoteSocketAddress().toString()
+                    + "\n");
+            // Create a runnable task
+            try {
+                Class.forName("org.postgresql.Driver");
+                String url = "jdbc:postgresql://localhost:5432/railway";
+                String userName = "postgres";
+                String passWord = "hello";
+                Connection con;
+                try {
+                    con = DriverManager.getConnection(url, userName, passWord);
+                    Runnable runnableTask = new QueryRunner(socketConnection, con);
+                    // Submit task for execution
+                    executorService.submit(runnableTask);
+                } catch (SQLException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            } catch (ClassNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+        }
+    }
 }
