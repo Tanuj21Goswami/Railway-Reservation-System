@@ -11,16 +11,15 @@ booked_seats_tn varchar(100);
 temp integer;
 query varchar(1000);
 result varchar(1000);
-
 BEGIN
 passenger_tn := 'passenger_' || CAST (ttno as VARCHAR(5));
 booked_seats_tn := 'booked_seats_' || CAST(ttno as varchar(5));
 pid := uuid_generate_v4();
 IF pref = 'a' or pref = 'A'
 THEN
-        select ac_capacity into capacity from global_constants limit 1;
+        capacity := 18;
 ELSE
-        select sleeper_capacity into capacity from global_constants limit 1;
+        capacity := 24;
 END IF;
 IF left_seats%capacity = 0
 THEN    
@@ -40,7 +39,6 @@ THEN
 ELSE
         seat_no = left_seats  % capacity;
 END IF;
-RAISE NOTICE '% %',coach_no,seat_no;
 result:=coach_no || ' , ' || seat_no  ;
 query := 'INSERT INTO '|| passenger_tn || ' values($1,$2,$3,$4);';
 EXECUTE query USING pid,name,age,gender;

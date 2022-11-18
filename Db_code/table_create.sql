@@ -1,24 +1,18 @@
 CREATE TABLE RUNNING_TRAINS(
         TNO INTEGER NOT NULL,
-        NO_A_COACHES INTEGER NOT NULL,
-        NO_S_COACHES INTEGER NOT NULL,
         DOJ DATE NOT NULL,
-        SEATS_LEFT_A INTEGER NOT NULL,
-        SEATS_LEFT_S INTEGER NOT NULL,
-        STARTING_STN VARCHAR(50),
-        ENDING_STN VARCHAR(50),
-        DEP_TIME VARCHAR(50),
-        ARR_TIME VARCHAR(50)
         PRIMARY KEY(TNO,DOJ)
 );
-CREATE TABLE GLOBAL_CONSTANTS(
-        AC_CAPACITY INTEGER NOT NULL,
-        SLEEPER_CAPACITY INTEGER NOT NULL
-);
-INSERT INTO GLOBAL_CONSTANTS VALUES(18,24);
 
-CREATE TABLE tickets(
-        pnr integer,
-        tno integer,
-        primary key(pnr)
+CREATE TABLE train_journey_info(
+    tno INTEGER,
+    stn varchar(50),
+    arr_time time,
+    dep_time time,
+    doj date,
+    PRIMARY KEY(tno,stn,doj)
 );
+
+CREATE TABLE QUERY_RESULT(
+        
+)

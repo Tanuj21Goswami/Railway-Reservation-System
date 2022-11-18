@@ -71,6 +71,7 @@ class sendQuery implements Runnable
        {
            e1.printStackTrace();
        }
+       System.out.println("Client Finished!");
    }
 }
  

@@ -15,9 +15,11 @@ class QueryRunner implements Runnable
    //  Declare socket for client access
    protected Socket socketConnection;
    private Connection con;
+   private int max_try;
    public QueryRunner(Socket clientSocket,Connection con){
        this.socketConnection =  clientSocket;
        this.con  = con;
+       this.max_try  = 10;
        
    }
    public void run()
@@ -31,19 +33,30 @@ class QueryRunner implements Runnable
            OutputStreamWriter outputStream = new OutputStreamWriter(socketConnection                                                                    .getOutputStream()) ;
            BufferedWriter bufferedOutput = new BufferedWriter(outputStream) ;
            PrintWriter printWriter = new PrintWriter(bufferedOutput, true) ;
-          
            String clientCommand = "" ;
            String responseQuery = "" ;
            String queryInput = "" ;
            String inputQ="";
- 
            while(true)
            {
                // Read client query
                clientCommand = bufferedInput.readLine();
                StringTokenizer tokenizer = new StringTokenizer(clientCommand);
                queryInput = tokenizer.nextToken();
+               System.out.println("query input: "+queryInput);
                int len=queryInput.length();
+               if(queryInput.equals("#")){
+                   String returnMsg = "Connection Terminated - client : "
+                                       + socketConnection.getRemoteSocketAddress().toString();
+                   System.out.println(returnMsg);
+                   inputStream.close();
+                   bufferedInput.close();
+                   outputStream.close();
+                   bufferedOutput.close();
+                   printWriter.close();
+                   socketConnection.close();
+                   return;
+               }
                if(len==4)
                {
                    String delimSpace = "[ ]+";
@@ -53,13 +66,13 @@ class QueryRunner implements Runnable
                    inputQ=inputQ+arr1[3]+",";
                    inputQ=inputQ+arr1[2]+",";
                    inputQ=inputQ+"'"+arr1[1]+"');";
-                   System.out.println(inputQ);
+                //    System.out.println(inputQ);
                    try{
                         this.con.setAutoCommit(false);
                         try {
                             Statement st = this.con.createStatement();
                             st.executeQuery(inputQ);
-                            System.out.println("query executed");
+                            // System.out.println("query executed");
                             this.con.commit();
                         } catch (SQLException e) {
                             // TODO Auto-generated catch block
@@ -79,7 +92,6 @@ class QueryRunner implements Runnable
                 //    String output="";
                    String dummy="";
                    forfunc=forfunc+"SELECT * from book_tickets(";
-                
                    inputQ=inputQ+"SELECT * from is_seat_available(";
                    String delimSpace = "[, ]+";
                    String[] arr1  = clientCommand.split(delimSpace);
@@ -101,94 +113,94 @@ class QueryRunner implements Runnable
  
                    String []output=new String[Integer.parseInt(arr1[0])];
                    System.out.println(inputQ);
-                   try{
-                       this.con.setAutoCommit(false);
-                   try {
-                       Statement st = this.con.createStatement();
-                       ResultSet rs = st.executeQuery(inputQ);
-                       int canBook = 0;
-                       while(rs.next()){
-                           canBook =rs.getInt(1);
-                           System.out.println(rs.getInt(1));
-                           forfunc=forfunc+String.valueOf(canBook);
+                   int canBook = -1;
+                   int counter = 0;
+                   while(counter < max_try){
+                        try{
+                            this.con.setAutoCommit(false);
+                            Statement st = this.con.createStatement();
+                            ResultSet rs = st.executeQuery(inputQ);
+                            while(rs.next()){
+                                canBook =rs.getInt(1);
+                                System.out.println(rs.getInt(1));
+                                forfunc=forfunc+String.valueOf(canBook);
+                            }
+                                this.con.commit();
+                                counter = max_try;
+                            }
+                            catch(SQLException e){
+                                this.con.rollback();
+                                counter++;
+                                e.printStackTrace();
                         }
+                    }
+                    try{
                         if(canBook>=0){
-                                forfunc=forfunc+",";
-                                forfunc=forfunc+arr1[x-3]+",'"+arr1[x-2]+"');";
-                                System.out.println(forfunc);
-                                try{
-                                        st = this.con.createStatement();
-                                        rs = st.executeQuery(forfunc);
-                                        while(rs.next()){
-                                            System.out.println(rs.getString(1));
-                                            dummy=rs.getString(1);
-                                        }
-                                    String[] arr  = dummy.split(delimSpace);  
-                                    int l=arr.length;
-                                    int in=1;  
-                                    for(int i=0;i<Integer.parseInt(arr1[0]) && in<l;i++)
-                                    {
-                                        output[i]=String.valueOf(i+1)+") "+arr1[i+1]+" "+arr[in]+" "+arr[in+1];
-                                        in=in+2;
-                                    }
-
-                                    if(arr[1].charAt(0)=='A')
-                                    {
-                                        String []AC={"LB","LB","UB","UB","SL","SU"};
-                                        in=1;
-                                        for(int i=0;i<Integer.parseInt((arr1[0]));i++)
-                                        {
-                                            int ber=Integer.parseInt((arr[in+1]));
-                                            output[i]=output[i]+" "+AC[ber%6];
-                                            in=in+2;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        String []SL={"LB","MB","UB","lB","MB","UB","SL","SU"};
-                                        in=1;
-                                        for(int i=0;i<Integer.parseInt((arr1[0]));i++)
-                                        {
-                                            int ber=Integer.parseInt((arr[in+1]));
-                                            output[i]=output[i]+" "+SL[ber%8];
-                                            in=in+2;
-                                        }
-                                    }
-
-                                    String heading="";
-                                    heading="PNR: " + arr[0] + "\n" + "Train No: "+ arr1[x-3]+"\nDate Of Journey: "+arr1[x-2];
-                                    System.out.println(heading); 
-                                    for(int i=0;i<Integer.parseInt((arr1[0]));i++)
-                                    {
-                                        System.out.println(output[i]);
-                                    }
-                                    this.con.commit();
+                        forfunc=forfunc+",";
+                        forfunc=forfunc+arr1[x-3]+",'"+arr1[x-2]+"');";
+                        System.out.println(forfunc);
+                                Statement st = this.con.createStatement();
+                                ResultSet rs = st.executeQuery(forfunc);
+                                while(rs.next()){
+                                    System.out.println(rs.getString(1));
+                                    dummy=rs.getString(1);
                                 }
-                                catch (SQLException e) {
-                                    // TODO Auto-generated catch block
-                                    this.con.rollback();
-                                    e.printStackTrace();
+                            String[] arr  = dummy.split(delimSpace);  
+                            int l=arr.length;
+                            int in=1;  
+                            for(int i=0;i<Integer.parseInt(arr1[0]) && in<l;i++)
+                            {
+                                output[i]=String.valueOf(i+1)+") "+arr1[i+1]+" "+arr[in]+" "+arr[in+1];
+                                in=in+2;
+                            }
+                            if(arr[1].charAt(0)=='A')
+                            {
+                                String []AC={"LB","LB","UB","UB","SL","SU"};
+                                in=1;
+                                for(int i=0;i<Integer.parseInt((arr1[0]));i++)
+                                {
+                                    int ber=Integer.parseInt((arr[in+1]));
+                                    output[i]=output[i]+" "+AC[ber%6];
+                                    in=in+2;
                                 }
+                            }
+                            else
+                            {
+                                String []SL={"LB","MB","UB","lB","MB","UB","SL","SU"};
+                                in=1;
+                                for(int i=0;i<Integer.parseInt((arr1[0]));i++)
+                                {
+                                    int ber=Integer.parseInt((arr[in+1]));
+                                    output[i]=output[i]+" "+SL[ber%8];
+                                    in=in+2;
+                                }
+                            }
+
+                            String heading="";
+                            heading="PNR: " + arr[0] + "\n" + "Train No: "+ arr1[x-3]+"\nDate Of Journey: "+arr1[x-2];
+                            System.out.println(heading); 
+                            for(int i=0;i<Integer.parseInt((arr1[0]));i++)
+                            {
+                                System.out.println(output[i]);
+                            }
+                            
                         }
                     else{
                         System.out.println("Seat can not be booked!");
                     }
-                    } catch (SQLException e) {
-                        // TODO Auto-generated catch block
-                        this.con.rollback();
-                        e.printStackTrace();
-                    }
+                    this.con.commit();
                 }
                 catch(SQLException e){
-                    System.out.println("Error in setting auto commit to false");
+                    this.con.rollback();
+                    e.printStackTrace();
                 }
+            }
                     inputQ="";
                    // for (String uniqVal1 : arr1)
                    // {
                    //     System.out.println(uniqVal1);
                    // }
  
-               }
                // inputQ
                // for (String uniqVal1 : arr1) {
                // // System.out.println(uniqVal1);
@@ -197,19 +209,7 @@ class QueryRunner implements Runnable
                // }
  
                // System.out.println(queryInput);
-               if(queryInput.equals("Finish"))
-               {
-                   String returnMsg = "Connection Terminated - client : "
-                                       + socketConnection.getRemoteSocketAddress().toString();
-                   System.out.println(returnMsg);
-                   inputStream.close();
-                   bufferedInput.close();
-                   outputStream.close();
-                   bufferedOutput.close();
-                   printWriter.close();
-                   socketConnection.close();
-                   return;
-               }
+            
  
                //-------------- your DB code goes here----------------------------
                // try

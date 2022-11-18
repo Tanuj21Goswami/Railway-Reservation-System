@@ -1,3 +1,4 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE OR REPLACE FUNCTION book_tickets(n_tickets INTEGER,names varchar(1000) ,pref varchar,left_seats integer,ttno integer,tdoj date)
 RETURNS varchar AS
 $$
@@ -24,7 +25,7 @@ For i in 1..n_tickets
    Curr := split_part(names,' ',i );
    Select book_seat into query_result from book_seat(pnr,Curr,age,gender,pref,Starting_seat,ttno,tdoj);
    result:=result || query_result || ' ';
-   -- query:= 'Select * from book_seat( ' || pnr || ','''|| Curr || ''',' || age || ',''' || gender || ''', '''|| pref || ''' ,''' || Starting_seat || ',' || ttno || ',''' || tdoj || ''');';
+   -- query:= 'Select * from book_seat( ' || pnr || ','''|| Curr || ''',' || age || ',''' || gender || ''', '''|| pref || ''' ,''' || Starting_seat || ',' || ttno || ',''' || tdoj || ''');';x    
    Starting_seat=Starting_seat+1;
    END Loop;
    RETURN result;
