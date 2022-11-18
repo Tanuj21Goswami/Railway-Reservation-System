@@ -1,5 +1,123 @@
-******* Dummy result ******
-******* Dummy result ******
-******* Dummy result ******
-******* Dummy result ******
-******* Dummy result ******
+#Query:1
+PNR: a145fc0b-f2c1-4822-9e76-b1a55502b66c
+Train No: 6909
+Date Of Journey: 2023-01-11
+   1) ELWN S5 17 MB
+   2) PUAL S5 18 UB
+
+
+
+
+#Query:2
+PNR: 40e03d22-0b5a-4d10-bd66-46337d880772
+Train No: 4523
+Date Of Journey: 2023-05-10
+   1) RBFF S2 21 UB
+   2) GGLP S2 22 SL
+   3) BHGM S2 23 SU
+   4) ELKK S2 24 LB
+   5) BSFG S3 1 MB
+   6) UZTD S3 2 UB
+   7) NKYP S3 3 lB
+   8) QNMD S3 4 MB
+   9) RPZW S3 5 UB
+   10) UKUR S3 6 SL
+   11) HPFS S3 7 SU
+   12) THIY S3 8 LB
+   13) ASPL S3 9 MB
+   14) KYUQ S3 10 UB
+   15) UAEQ S3 11 lB
+   16) OWDX S3 12 MB
+   17) RZMR S3 13 UB
+   18) VYZN S3 14 SL
+   19) DCEE S3 15 SU
+
+
+
+
+#Query:3
+PNR: df42698a-74cf-4ee7-b3a9-c51b44eeb9b4
+Train No: 6581
+Date Of Journey: 2023-04-10
+   1) THML S4 17 MB
+   2) HIOT S4 18 UB
+   3) KBBF S4 19 lB
+   4) PPJA S4 20 MB
+   5) DSPB S4 21 UB
+   6) KEWC S4 22 SL
+   7) NGUC S4 23 SU
+   8) JBSX S4 24 LB
+
+
+
+
+#Query:4
+PNR: 2b86b1c5-e3ab-4041-8c9d-a77d267a6ceb
+Train No: 5332
+Date Of Journey: 2023-08-08
+   1) UXFV S4 13 UB
+   2) MBBS S4 14 SL
+   3) RBJD S4 15 SU
+   4) BDDY S4 16 LB
+   5) OWVG S4 17 MB
+   6) EMXZ S4 18 UB
+   7) YIIX S4 19 lB
+   8) YYXG S4 20 MB
+   9) MUZJ S4 21 UB
+
+
+
+
+#Query:5
+PNR: eeffe44b-8e15-47c2-a9ce-c52314a96cd0
+Train No: 4423
+Date Of Journey: 2023-02-19
+   1) QNLT S5 5 UB
+   2) TPBN S5 6 SL
+   3) HJSC S5 7 SU
+   4) VFVY S5 8 LB
+   5) ZGBN S5 9 MB
+
+
+
+
+#Query:6
+PNR: 5c19c825-48f2-48f6-b67e-fb52e50d1329
+Train No: 5653
+Date Of Journey: 2023-09-14
+   1) KFNK S4 13 UB
+   2) NIZN S4 14 SL
+   3) CWOS S4 15 SU
+   4) SCLD S4 16 LB
+   5) VTLU S4 17 MB
+   6) JHFL S4 18 UB
+   7) UTZS S4 19 lB
+   8) SGGH S4 20 MB
+   9) NMCX S4 21 UB
+
+
+
+
+#Query:7
+PNR: 62e73135-b24a-4345-a819-045852561711
+Train No: 2495
+Date Of Journey: 2023-07-19
+   1) RSFY S3 13 UB
+   2) BWRD S3 14 SL
+   3) WUHO S3 15 SU
+   4) RKLY S3 16 LB
+   5) CTGT S3 17 MB
+   6) VGOB S3 18 UB
+   7) AXKX S3 19 lB
+   8) AUYS S3 20 MB
+   9) OXGA S3 21 UB
+   10) GKGM S3 22 SL
+   11) ASMW S3 23 SU
+   12) DPAK S3 24 LB
+   13) SMPO S4 1 MB
+   14) AFCC S4 2 UB
+   15) AZVG S4 3 lB
+
+
+
+

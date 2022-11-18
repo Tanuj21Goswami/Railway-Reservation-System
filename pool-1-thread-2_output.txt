@@ -1,5 +1,61 @@
-******* Dummy result ******
-******* Dummy result ******
-******* Dummy result ******
-******* Dummy result ******
-******* Dummy result ******
+#Query:1
+PNR: 9ce8ce64-1ab1-4994-b0df-ebc5cf7d2da4
+Train No: 3983
+Date Of Journey: 2023-11-13
+   1) JUZD S4 1 MB
+   2) MOPJ S4 2 UB
+   3) QXNU S4 3 lB
+   4) XTBB S4 4 MB
+   5) XADH S4 5 UB
+   6) RSXB S4 6 SL
+   7) HJFV S4 7 SU
+   8) GSSF S4 8 LB
+   9) ZIQW S4 9 MB
+   10) QLJQ S4 10 UB
+   11) GBCL S4 11 lB
+   12) WUZH S4 12 MB
+
+
+
+
+#Query:2
+PNR: 22f19589-fee1-4bdb-8783-b46b241960c5
+Train No: 5914
+Date Of Journey: 2023-10-21
+   1) AAIJ S3 17 MB
+   2) SIQD S3 18 UB
+   3) CELE S3 19 lB
+   4) ATJS S3 20 MB
+   5) FWXV S3 21 UB
+   6) MZHT S3 22 SL
+   7) WEIC S3 23 SU
+   8) BKHQ S3 24 LB
+   9) JXKP S4 1 MB
+   10) IOYS S4 2 UB
+   11) FZDI S4 3 lB
+   12) ULTQ S4 4 MB
+   13) WMWT S4 5 UB
+   14) CPML S4 6 SL
+
+
+
+
+#Query:3
+PNR: 563bf3ac-f1d8-44e5-b8a8-0a596e66cc95
+Train No: 5859
+Date Of Journey: 2023-01-03
+   1) TZGF S4 5 UB
+   2) NCTJ S4 6 SL
+   3) BWLZ S4 7 SU
+   4) HRPC S4 8 LB
+   5) AAPO S4 9 MB
+   6) AYQB S4 10 UB
+   7) VLUS S4 11 lB
+   8) RUYD S4 12 MB
+   9) PBRH S4 13 UB
+   10) IFOY S4 14 SL
+   11) OOPN S4 15 SU
+
+
+
+

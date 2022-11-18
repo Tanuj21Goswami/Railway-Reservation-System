@@ -1,5 +1,40 @@
-******* Dummy result ******
-******* Dummy result ******
-******* Dummy result ******
-******* Dummy result ******
-******* Dummy result ******
+#Query:1
+Train No: 1234
+Date Of Journey: 2022-11-17
+Seat can not be booked!
+
+
+
+
+#Query:2
+Train No: 1234
+Date Of Journey: 2022-11-17
+Seat can not be booked!
+
+
+
+
+#Query:3
+Train No: 1234
+Date Of Journey: 2022-11-17
+Seat can not be booked!
+
+
+
+
+#Query:4
+Train No: 1234
+Date Of Journey: 2022-11-17
+Seat can not be booked!
+
+
+
+
+#Query:5
+Train No: 1234
+Date Of Journey: 2022-11-17
+Seat can not be booked!
+
+
+
+
