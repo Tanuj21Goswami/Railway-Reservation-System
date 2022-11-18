@@ -1,4 +1,4 @@
- CREATE OR REPLACE FUNCTION search_procedure(st VARCHAR(50) , en VARCHAR(50) )
+CREATE OR REPLACE FUNCTION search_procedure(st VARCHAR(50) , en VARCHAR(50) )
     RETURNS TABLE(
     train_1 INTEGER, 
     train_1_starting VARCHAR(50), 
